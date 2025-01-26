@@ -93,7 +93,7 @@
         <SeekBarPreference
             android:defaultValue="3"
             android:key="prefSlider_numToDownload"
-            android:max="10"
+            android:max="50"
             android:persistent="true"
             android:title="@string/prefTitle_numToDownload"
             app:min="1" />
