@@ -20,8 +20,10 @@ import android.content.DialogInterface
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.viewpager2.widget.ViewPager2
@@ -35,9 +37,20 @@ import com.google.android.apps.muzei.api.MuzeiContract.Sources.isProviderSelecte
 import com.google.android.material.tabs.TabLayoutMediator
 
 class MainActivity : PixivMuzeiActivity(), AdvOptionsPreferenceFragment.NightModePreferenceListener {
+    private val pushNotificationPermissionLauncher = registerForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { isGranted ->
+        // Optional: Handle the permission result
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         enableEdgeToEdge()
         super.onCreate(savedInstanceState)
+
+        // Request notification permission for Android 13+ (API 33+)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            pushNotificationPermissionLauncher.launch(android.Manifest.permission.POST_NOTIFICATIONS)
+        }
 
         val tabTitles = intArrayOf(
             R.string.tab_heading_main,
