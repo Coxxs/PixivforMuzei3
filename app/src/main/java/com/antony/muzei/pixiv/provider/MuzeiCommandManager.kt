@@ -26,6 +26,7 @@ import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
 import android.os.Environment
+import android.util.Log
 import androidx.core.app.RemoteActionCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
@@ -86,11 +87,7 @@ class MuzeiCommandManager {
             artworkUri = FileProvider.getUriForFile(context, "${BuildConfig.APPLICATION_ID}.fileprovider", artworkJpeg)
         } else if (artworkPng.exists()) {
             artworkUri = FileProvider.getUriForFile(context, "${BuildConfig.APPLICATION_ID}.fileprovider", artworkPng)
-        } else if (ContextCompat.checkSelfPermission(
-                context,
-                Manifest.permission.WRITE_EXTERNAL_STORAGE
-            ) == PackageManager.PERMISSION_GRANTED
-        ) {
+        } else {
             context.contentResolver.query(
                 ProviderContract.getProviderClient(context, PixivArtProvider::class.java).contentUri,
                 arrayOf("persistent_uri"),
@@ -102,10 +99,9 @@ class MuzeiCommandManager {
                 it.moveToFirst()
                 // Hardcoding a 0 is a bit dodgy, but we only request one column "persistent_uri"
                 artworkUri = Uri.parse(it.getString(0))
+                Log.d("MuzeiCommandManager", "artworkUri: $artworkUri")
                 it.close()
             }
-        } else {
-            return null
         }
 
         return Intent().apply {
