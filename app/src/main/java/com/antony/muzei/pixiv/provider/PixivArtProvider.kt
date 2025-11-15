@@ -72,10 +72,8 @@ class PixivArtProvider : MuzeiArtProvider() {
     }
 
     override fun getCommandActions(artwork: Artwork): List<RemoteActionCompat> {
-        if (!running) {
-            return emptyList()
-        }
-        return commandManager.provideActions(checkContext(), artwork)
+        val context = context ?: return super.getCommandActions(artwork)
+        return commandManager.provideActions(context, artwork)
     }
 
     @Throws(IOException::class)
